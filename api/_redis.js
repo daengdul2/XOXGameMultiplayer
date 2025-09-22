@@ -1,8 +1,7 @@
-import { Redis } from '@upstash/redis'
-const redis = new Redis({
-  url: 'https://tolerant-sparrow-8867.upstash.io',
-  token: 'ASKjAAImcDJjNWY0ZTdiMjdiNjE0NGRhYWQxMzU1YWM2NTE0NjE0NHAyODg2Nw',
-})
+import { Redis } from "@upstash/redis";
 
-await redis.set("foo", "bar");
-await redis.get("foo");
+// koneksi ke Upstash Redis (gunakan env variable di Vercel Dashboard)
+export const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});

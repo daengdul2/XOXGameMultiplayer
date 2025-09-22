@@ -1,7 +1,7 @@
 import { Redis } from '@upstash/redis'
-const redis = Redis.fromEnv()
-  url: process.env.UPSTASH_REDIS_REST_URL,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+const redis = new Redis({
+  url: 'https://tolerant-sparrow-8867.upstash.io',
+  token: 'ASKjAAImcDJjNWY0ZTdiMjdiNjE0NGRhYWQxMzU1YWM2NTE0NjE0NHAyODg2Nw',
 })
 
 await redis.set("foo", "bar");

@@ -53,15 +53,14 @@ async function pollState() {
   setInterval(async () => {
     const res = await fetch(`/api/state?room=${roomId}`);
     const data = await res.json();
-    if (data.error) return;
     renderBoard(data.board);
     if (data.winner) {
       status.textContent = data.winner === "Draw" ? "Seri!" : `${data.winner} menang!`;
     } else {
       status.textContent = `Giliran: ${data.turn}`;
     }
-  }, 1500);
+  }, 1500); // polling setiap 1.5 detik
 }
 
-
 console.log("✅ script.js sudah terhubung!");
+

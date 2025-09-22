@@ -1,4 +1,3 @@
-console.log("✅ script.js sudah terhubung!");
 let roomId = null;
 let symbol = null;
 
@@ -64,3 +63,5 @@ async function pollState() {
   }, 1500);
 }
 
+
+console.log("✅ script.js sudah terhubung!");

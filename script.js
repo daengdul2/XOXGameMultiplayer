@@ -1,5 +1,6 @@
 let roomId = null;
 let symbol = null;
+let pollInterval = null;
 
 const createBtn = document.getElementById("createBtn");
 const joinBtn = document.getElementById("joinBtn");
@@ -14,9 +15,9 @@ function renderBoard(board) {
     const div = document.createElement("div");
     div.className = "cell";
     div.textContent = cell || "";
-    div.onclick = () => {
+    div.onclick = async () => {
       if (!cell && roomId) {
-        fetch(`/api/move?room=${roomId}&symbol=${symbol}&index=${i}`);
+        await fetch(`/api/move?room=${roomId}&symbol=${symbol}&index=${i}`);
       }
     };
     boardEl.appendChild(div);
@@ -44,13 +45,16 @@ joinBtn.onclick = async () => {
   pollState();
 };
 
-resetBtn.onclick = () => {
-  if (roomId) fetch(`/api/createRoom?room=${roomId}&reset=1`);
+resetBtn.onclick = async () => {
+  if (roomId) {
+    await fetch(`/api/createRoom?room=${roomId}&reset=1`);
+  }
 };
 
 async function pollState() {
-  if (!roomId) return;
-  setInterval(async () => {
+  if (pollInterval) clearInterval(pollInterval);
+  pollInterval = setInterval(async () => {
+    if (!roomId) return;
     const res = await fetch(`/api/state?room=${roomId}`);
     const data = await res.json();
     if (data.error) return;

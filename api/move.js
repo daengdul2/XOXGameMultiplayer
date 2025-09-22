@@ -4,18 +4,23 @@ import { checkWinner } from "./_helpers";
 export default async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   const roomId = url.searchParams.get("room");
-  const index = parseInt(url.searchParams.get("index"));
   const symbol = url.searchParams.get("symbol");
+  const index = parseInt(url.searchParams.get("index"), 10);
 
-  const room = await redis.get(`room:${roomId}`);
-  if (!room) return res.json({ error: "Room tidak ditemukan" });
+  const raw = await redis.get(`room:${roomId}`);
+  if (!raw) return res.status(400).json({ error: "Room tidak ada" });
 
-  if (!room.board[index] && room.turn === symbol && !room.winner) {
-    room.board[index] = symbol;
-    room.winner = checkWinner(room.board);
-    room.turn = room.turn === "X" ? "O" : "X";
-    await redis.set(`room:${roomId}`, room);
+  const room = JSON.parse(raw);
+  if (room.winner) return res.status(200).json(room);
+  if (room.turn !== symbol) return res.status(400).json({ error: "Bukan giliranmu" });
+  if (room.board[index]) return res.status(400).json({ error: "Sudah diisi" });
+
+  room.board[index] = symbol;
+  room.winner = checkWinner(room.board);
+  if (!room.winner) {
+    room.turn = symbol === "X" ? "O" : "X";
   }
 
-  res.json({ success: true });
+  await redis.set(`room:${roomId}`, JSON.stringify(room));
+  res.status(200).json(room);
 };
